@@ -55,6 +55,7 @@ if __name__ == "__main__":
 
     songPlaying = ""
     previousSong = ""
+    previous_10_Songs = []
     while True:
         songPlaying = song_playing()
         if songPlaying == previousSong:
@@ -62,4 +63,8 @@ if __name__ == "__main__":
         else:
             current_song()
             previousSong = songPlaying
+            previous_10_Songs.insert(0, previousSong)
+            if len(previous_10_Songs) > 10:
+                previous_10_Songs.pop(10)
+            print(previous_10_Songs)
         time.sleep(1)
