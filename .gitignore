@@ -1,2 +1,3 @@
-.cashe
+.cache
 authentication.py
+__pycache__
