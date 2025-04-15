@@ -48,7 +48,7 @@ def current_song():
                 else:
                     artist_names += artists[i]["name"] + ", "
 
-        print(f'You are listening to {song_name} by {artist_names}')
+        print(f'You are listening to \'{song_name}\' by {artist_names}')
 
 
 if __name__ == "__main__":
