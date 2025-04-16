@@ -5,12 +5,12 @@ import json
 # Fetch your top tracks
 top_tracks = sp.current_user_top_tracks(limit=10, time_range='medium_term')  # medium_term = last 6 months
 
-# Print results
-print("🎵 Your Top 10 Tracks:")
-for idx, track in enumerate(top_tracks['items']):
-    name = track['name']
-    artist = track['artists'][0]['name']
-    print(f"{idx+1}. {name} by {artist}")
+def top_10_tracks():
+    print("🎵 Your Top 10 Tracks:")
+    for idx, track in enumerate(top_tracks['items']):
+        name = track['name']
+        artist = track['artists'][0]['name']
+        print(f"{idx+1}. {name} by {artist}")
 
 
 with open("schema.dat", "w") as file:
@@ -19,9 +19,7 @@ with open("schema.dat", "w") as file:
 
 
 def song_playing():
-    if sp.current_user_playing_track() is None:
-        pass
-    else:
+    if sp.current_user_playing_track() is not None:
         data = sp.current_user_playing_track()
         items = data["item"]
 
@@ -63,8 +61,9 @@ if __name__ == "__main__":
         else:
             current_song()
             previousSong = songPlaying
-            previous_10_Songs.insert(0, previousSong)
+            if previousSong is not None:
+                previous_10_Songs.insert(0, previousSong)
             if len(previous_10_Songs) > 10:
                 previous_10_Songs.pop(10)
-            print(previous_10_Songs)
-        time.sleep(1)
+            print(previous_10_Songs, "\n")
+        time.sleep(2)
