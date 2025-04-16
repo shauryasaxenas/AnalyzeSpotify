@@ -29,7 +29,6 @@ scope = scope = (
 
 if os.path.exists(".cache"):
     os.remove(".cache")
-    print("Cache cleared!")
 
 
 # Set up Spotify authentication
@@ -38,7 +37,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     client_secret=CLIENT_SECRET,
     redirect_uri=REDIRECT_URI,
     scope=scope
-    ), 
+    ),
     requests_timeout=10
 
 )
@@ -46,5 +45,5 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
 user_data = sp.current_user()
 
 print("You are logged in as: ")
-print("DIspla")
+print("Display Name: ", user_data.get("id"))
 print("Email: ", user_data.get("email"))

@@ -2,3 +2,4 @@
 __pycache__/
 schema.dat
 .env
+.DS_Store
