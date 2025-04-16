@@ -41,9 +41,3 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     requests_timeout=10
 
 )
-
-user_data = sp.current_user()
-
-print("You are logged in as: ")
-print("Display Name: ", user_data.get("id"))
-print("Email: ", user_data.get("email"))
