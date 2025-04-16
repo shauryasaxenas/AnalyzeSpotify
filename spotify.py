@@ -28,9 +28,7 @@ def song_playing():
 
 
 def current_song():
-    if sp.current_user_playing_track() is None:
-        pass
-    else:
+    if sp.current_user_playing_track() is not None:
         artist_names = ""
         data = sp.current_user_playing_track()
         items = data["item"]
@@ -47,20 +45,15 @@ def current_song():
                 else:
                     artist_names += artists[i]["name"] + ", "
 
-        print(f'You are listening to \'{song_name}\' by {artist_names}')
+        return f'You are listening to \'{song_name}\' by {artist_names}'
 
 
-if __name__ == "__main__":
-
+def previous_songs(previous_10_Songs):
     songPlaying = ""
     previousSong = ""
-    previous_10_Songs = []
     while True:
         songPlaying = song_playing()
-        if songPlaying == previousSong:
-            pass
-        else:
-            current_song()
+        if songPlaying is not previousSong:
             previousSong = songPlaying
             if previousSong is not None:
                 previous_10_Songs.insert(0, previousSong)
@@ -68,3 +61,12 @@ if __name__ == "__main__":
                 previous_10_Songs.pop(10)
             print(previous_10_Songs, "\n")
         time.sleep(2)
+
+        return previous_10_Songs
+
+    
+
+if __name__ == "__main__":
+    previous_10_Songs = []
+
+    previous_songs(previous_10_Songs)
