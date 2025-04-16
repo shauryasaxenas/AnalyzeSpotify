@@ -1,4 +1,4 @@
 .cache
-authentication.py
 __pycache__/
 schema.dat
+.env
