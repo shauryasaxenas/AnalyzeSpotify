@@ -10,15 +10,14 @@ def top_10_tracks(time_range="short_term"):
 
     with open("pretty.json", "w") as f:
         json.dump(top_tracks, f, indent=4)
-    
-    tracksList, trackLinks, counter, counterTwo= {}, {}, 1, 0
+
+    tracksList, trackLinks, counter, counterTwo = {}, {}, 1, 0
 
     for idx, track in enumerate(top_tracks['items']):
         name, artist = track['name'], track['artists'][0]['name']
- 
+
         tracksList[counter] = f"{idx+1}. {name} by {artist}"
         counter += 1
-    
 
     while counterTwo < 10:
         trackLinks[counterTwo + 1] = top_albums[counterTwo]["album"]["images"][0]['url']
@@ -54,7 +53,8 @@ def current_song():
                     artist_names += artists[i]["name"] + ", "
 
         return f'You are listening to \'{song_name}\' by {artist_names}'
-    
+
+
 def get_current_album_cover():
     if sp.current_user_playing_track() is not None:
         data = sp.current_user_playing_track()

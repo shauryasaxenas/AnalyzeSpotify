@@ -1,11 +1,9 @@
-from flask import Flask, request, send_file
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api, reqparse, fields, marshal_with, abort
 from authentication import sp
 from spotify import current_song, get_current_album_cover, top_10_tracks
-import requests
 from flask_cors import CORS
-from io import BytesIO
 
 
 app = Flask(__name__)
@@ -40,7 +38,7 @@ class Users(Resource):
     def get(self):
         users = UserModel.query.all()
         return users
-    
+
     @marshal_with(userFields)
     def post(self):
         args = user_args.parse_args()
@@ -91,7 +89,7 @@ class CurrentSong(Resource):
             return {"current_song": song}, 200
         else:
             return {"current_song": "No song is currently playing"}, 200
-        
+
 
 class Top10Tracks(Resource):
     def get(self):
@@ -105,6 +103,7 @@ class Top10Tracks(Resource):
         else:
             return {"message": "No recent songs found"}, 404
 
+
 class getCurrentAlbumCover(Resource):
     def get(self):
         album_cover = get_current_album_cover()
@@ -112,6 +111,7 @@ class getCurrentAlbumCover(Resource):
             return {"album_cover": album_cover}, 200
         else:
             return {"message": "No album cover found"}, 404
+
 
 api.add_resource(Users, '/api/users/')
 api.add_resource(User, '/api/users/<int:id>')  # Add resource for single user
@@ -123,6 +123,7 @@ api.add_resource(getCurrentAlbumCover, '/api/album_cover/')
 @app.route('/')
 def home():
     return '<h1>Flask REST API</h1>'
+
 
 if __name__ == '__main__':
     app.run(debug=True)
