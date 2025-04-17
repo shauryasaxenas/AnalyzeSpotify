@@ -1,15 +1,14 @@
 from authentication import sp
 import time
 import json
+# with open("pretty.json", "w") as f:
+#     json.dump(top_tracks, f, indent=4)
 
 
-def top_10_tracks(time_range="short_term"):
+def top_20_tracks(time_range="short_term"):
     # Fetch your top tracks
-    top_tracks = sp.current_user_top_tracks(limit=10, time_range=time_range)  # medium_term = last 6 months
+    top_tracks = sp.current_user_top_tracks(limit=20, time_range=time_range)  # medium_term = last 6 months
     top_albums = top_tracks["items"]
-
-    with open("pretty.json", "w") as f:
-        json.dump(top_tracks, f, indent=4)
 
     tracksList, trackLinks, counter, counterTwo = {}, {}, 1, 0
 
@@ -19,11 +18,30 @@ def top_10_tracks(time_range="short_term"):
         tracksList[counter] = f"{idx+1}. {name} by {artist}"
         counter += 1
 
-    while counterTwo < 10:
+    while counterTwo < 20:
         trackLinks[counterTwo + 1] = top_albums[counterTwo]["album"]["images"][0]['url']
         counterTwo += 1
 
     return tracksList, trackLinks
+
+
+def top_20_artists(time_range="short_term"):
+
+    def add_commas(num):
+        return "{:,}".format(num)
+    
+    artists_list = sp.current_user_top_artists(limit=20, time_range=time_range)["items"]
+    popularity, artists, followers, artist_pfp_link, counter = {}, {}, {}, {}, 0
+
+    while counter < 20:
+        artists[counter + 1] = f"{counter + 1}. {artists_list[counter]['name']}"
+        popularity[counter + 1] = artists_list[counter]['popularity']
+        followers[counter + 1] = add_commas(artists_list[counter]['followers']['total'])
+        artist_pfp_link[counter + 1] = artists_list[counter]['images'][0]['url']
+        counter += 1
+
+    print(followers)
+    return artists, popularity, followers, artist_pfp_link
 
 
 def song_playing():
@@ -61,6 +79,9 @@ def get_current_album_cover():
         track = data["item"]
 
         return track['album']['images'][0]['url']
+    
+    else:
+        return "No song is currently playing"
 
 
 def previous_songs(previous_10_Songs):
@@ -81,4 +102,4 @@ def previous_songs(previous_10_Songs):
 
     
 if __name__ == "__main__":
-    print(top_10_tracks())
+    top_20_artists()
