@@ -1,6 +1,5 @@
 from authentication import sp
 import time
-import json
 
 # Fetch your top tracks
 top_tracks = sp.current_user_top_tracks(limit=10, time_range='medium_term')  # medium_term = last 6 months
@@ -8,15 +7,15 @@ top_tracks = sp.current_user_top_tracks(limit=10, time_range='medium_term')  # m
 
 def top_10_tracks():
     print("🎵 Your Top 10 Tracks:")
+    tracksList = {}
+    counter = 1
     for idx, track in enumerate(top_tracks['items']):
         name = track['name']
         artist = track['artists'][0]['name']
-        print(f"{idx+1}. {name} by {artist}")
+        tracksList[counter] = f"{idx+1}. {name} by {artist}"
+        counter += 1
 
-
-with open("schema.dat", "w") as file:
-    current_track = sp.current_user_playing_track()
-    file.write(json.dumps(current_track, indent=2))
+    return tracksList
 
 
 def song_playing():
@@ -46,7 +45,14 @@ def current_song():
                     artist_names += artists[i]["name"] + ", "
 
         return f'You are listening to \'{song_name}\' by {artist_names}'
-
+    
+def get_album_cover():
+    if sp.current_user_playing_track() is not None:
+        data = sp.current_user_playing_track()
+        track = data["item"]
+        
+        return track['album']['images'][2]['url']
+        
 
 def previous_songs(previous_10_Songs):
     songPlaying = ""
@@ -65,8 +71,5 @@ def previous_songs(previous_10_Songs):
         return previous_10_Songs
 
     
-
 if __name__ == "__main__":
-    previous_10_Songs = []
-
-    previous_songs(previous_10_Songs)
+    get_album_cover()
