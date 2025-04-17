@@ -1,14 +1,18 @@
-from flask import Flask
+from flask import Flask, request, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api, reqparse, fields, marshal_with, abort
 from authentication import sp
-from spotify import current_song, previous_songs
+from spotify import current_song, get_album_cover, top_10_tracks
 import requests
+from flask_cors import CORS
+from io import BytesIO
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 api = Api(app)  # Initialize Flask-RESTful API
+CORS(app)  # Enable CORS for all routes
 
 
 class UserModel(db.Model):
@@ -79,31 +83,61 @@ class User(Resource):
         users = UserModel.query.all()
         return users
 
+
 class CurrentSong(Resource):
     def get(self):
         song = current_song()
         if song:
             return {"current_song": song}, 200
         else:
-            return {"message": "No song is currently playing"}, 404
+            return {"current_song": "No song is currently playing"}, 200
         
-class RecentSongs(Resource):
+
+class Top10Tracks(Resource):
     def get(self):
-        songs = previous_songs()
-        if songs:
-            return {"recent_songs": songs}, 200
+        topTracks = top_10_tracks()
+        if topTracks:
+            return {"top_tracks": topTracks}, 200
         else:
             return {"message": "No recent songs found"}, 404
+
+class getAlbumCover(Resource):
+    def get(self):
+        album_cover = get_album_cover()
+        if album_cover:
+            return {"album_cover": album_cover}, 200
+        else:
+            return {"message": "No album cover found"}, 404
 
 api.add_resource(Users, '/api/users/')
 api.add_resource(User, '/api/users/<int:id>')  # Add resource for single user
 api.add_resource(CurrentSong, '/api/current_song/')
-api.add_resource(RecentSongs, '/api/recent_songs/')
+api.add_resource(Top10Tracks, '/api/top_tracks/')
+api.add_resource(getAlbumCover, '/api/album_cover/')
 
 
 @app.route('/')
 def home():
     return '<h1>Flask REST API</h1>'
+
+@app.route('/proxy-image')
+def proxy_image():
+    url = request.args.get('url')
+    if not url:
+        print("Missing 'url' parameter")
+        return {"error": "Missing 'url' parameter"}, 400
+
+    print(f"Fetching image from: {url}")
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        print("Image fetched successfully")
+        return send_file(BytesIO(response.content), mimetype='image/jpeg')
+    except Exception as e:
+        print(f"Image fetch failed: {e}")
+        return {"error": f"Failed to fetch image: {str(e)}"}, 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
