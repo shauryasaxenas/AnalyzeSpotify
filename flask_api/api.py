@@ -2,7 +2,7 @@ from flask import Flask, request, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api, reqparse, fields, marshal_with, abort
 from authentication import sp
-from spotify import current_song, get_album_cover, top_10_tracks
+from spotify import current_song, get_current_album_cover, top_10_tracks
 import requests
 from flask_cors import CORS
 from io import BytesIO
@@ -95,15 +95,19 @@ class CurrentSong(Resource):
 
 class Top10Tracks(Resource):
     def get(self):
-        topTracks = top_10_tracks()
-        if topTracks:
-            return {"top_tracks": topTracks}, 200
+        # Get the time range from the query string, default to "short_term"
+        time_range = request.args.get('range', 'short_term')
+
+        topTracks, TopTracksAlbumLinks = top_10_tracks(time_range)
+
+        if topTracks and TopTracksAlbumLinks:
+            return {"top_tracks": topTracks, "top_tracks_album_links": TopTracksAlbumLinks}, 200
         else:
             return {"message": "No recent songs found"}, 404
 
-class getAlbumCover(Resource):
+class getCurrentAlbumCover(Resource):
     def get(self):
-        album_cover = get_album_cover()
+        album_cover = get_current_album_cover()
         if album_cover:
             return {"album_cover": album_cover}, 200
         else:
@@ -113,31 +117,12 @@ api.add_resource(Users, '/api/users/')
 api.add_resource(User, '/api/users/<int:id>')  # Add resource for single user
 api.add_resource(CurrentSong, '/api/current_song/')
 api.add_resource(Top10Tracks, '/api/top_tracks/')
-api.add_resource(getAlbumCover, '/api/album_cover/')
+api.add_resource(getCurrentAlbumCover, '/api/album_cover/')
 
 
 @app.route('/')
 def home():
     return '<h1>Flask REST API</h1>'
-
-@app.route('/proxy-image')
-def proxy_image():
-    url = request.args.get('url')
-    if not url:
-        print("Missing 'url' parameter")
-        return {"error": "Missing 'url' parameter"}, 400
-
-    print(f"Fetching image from: {url}")
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        print("Image fetched successfully")
-        return send_file(BytesIO(response.content), mimetype='image/jpeg')
-    except Exception as e:
-        print(f"Image fetch failed: {e}")
-        return {"error": f"Failed to fetch image: {str(e)}"}, 500
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
