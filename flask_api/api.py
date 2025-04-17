@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api, reqparse, fields, marshal_with, abort
 from authentication import sp
-from spotify import current_song, get_current_album_cover, top_10_tracks
+from spotify import current_song, get_current_album_cover, top_20_tracks, top_20_artists
 from flask_cors import CORS
 
 
@@ -91,12 +91,12 @@ class CurrentSong(Resource):
             return {"current_song": "No song is currently playing"}, 200
 
 
-class Top10Tracks(Resource):
+class Top20Tracks(Resource):
     def get(self):
         # Get the time range from the query string, default to "short_term"
         time_range = request.args.get('range', 'short_term')
 
-        topTracks, TopTracksAlbumLinks = top_10_tracks(time_range)
+        topTracks, TopTracksAlbumLinks = top_20_tracks(time_range)
 
         if topTracks and TopTracksAlbumLinks:
             return {"top_tracks": topTracks, "top_tracks_album_links": TopTracksAlbumLinks}, 200
@@ -113,11 +113,29 @@ class getCurrentAlbumCover(Resource):
             return {"message": "No album cover found"}, 404
 
 
+class Top20Artists(Resource):
+    def get(self):
+        time_range = request.args.get('range', 'short_term')
+
+        topArtist, topArtistPopularity, topArtistFollowers, topArtistPfpLink = top_20_artists(time_range)
+
+        if topArtist and topArtistPopularity and topArtistFollowers and topArtistPfpLink:
+            return {
+                "top_artists": topArtist,
+                "top_artists_popularity": topArtistPopularity,
+                "top_artists_followers": topArtistFollowers,
+                "top_artists_pfp_link": topArtistPfpLink
+            }, 200
+        else:
+            return {"message": "No recent songs found"}, 404
+
+
 api.add_resource(Users, '/api/users/')
 api.add_resource(User, '/api/users/<int:id>')  # Add resource for single user
 api.add_resource(CurrentSong, '/api/current_song/')
-api.add_resource(Top10Tracks, '/api/top_tracks/')
+api.add_resource(Top20Tracks, '/api/top_tracks/')
 api.add_resource(getCurrentAlbumCover, '/api/album_cover/')
+api.add_resource(Top20Artists, '/api/top_artists/')
 
 
 @app.route('/')
