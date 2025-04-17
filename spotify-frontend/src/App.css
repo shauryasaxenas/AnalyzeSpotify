@@ -40,3 +40,24 @@
 .CurrentSong h1{
   color:#104fcd
 }
+
+
+.content-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.track-section,
+.artist-section {
+  flex: 1 1 45%; /* grow, shrink, basis */
+  max-width: 45%;
+}
+
+.track,
+.artist {
+  margin-bottom: 1rem;
+}
