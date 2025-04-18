@@ -12,6 +12,7 @@ function App() {
   const [timeRangeTrack, setTimeRangeTrack] = useState('short_term');
   const [timeRangeArtist, setTimeRangeArtist] = useState('short_term');
   const [topArtists, setTopArtists]         = useState(null);
+  const [userDetails, setUserDetails]      = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +36,11 @@ function App() {
         if (!topArtistsRes.ok) throw new Error(`Top artists fetch failed (${topArtistsRes.status})`);
         const topArtistsJson = await topArtistsRes.json();
         setTopArtists(topArtistsJson);
+
+        const userDetailsRes = await fetch(`http://127.0.0.1:5000/api/user_details/`);
+        if (!userDetailsRes.ok) throw new Error(`User details fetch failed (${userDetailsRes.status})`);
+        const userDetailsJson = await userDetailsRes.json();
+        setUserDetails(userDetailsJson);
 
       } catch (err) {
         setError(err.message);
@@ -60,92 +66,92 @@ function App() {
   const artistLinksObj = topArtists.top_artists_pfp_link;
   const popularity = Object.values(topArtists.top_artists_popularity);
   const followers = Object.values(topArtists.top_artists_followers);
-  
+
+  const user_name = userDetails.user_name;
+  const user_email = userDetails.user_email;
+  const user_pfp = userDetails.user_pfp;
   
 
   return (
     <div>
-            <div className={"CurrentSong"}>
-                <h1>Current Song</h1>
-                <p>{current_song} 
-                <img
-                    src={album_cover}
-                    alt="Album Cover For Current Song"
-                    style={{ width: '100px', height: 'auto'}}
-                    loading='lazy'
-                    />
-                </p>
-            </div>
-        
-            <div className="content-container">
-                <div className="track">
-                    <h1>Top 20 Tracks</h1>
-                    <div className="sort-control" style={{margin: '1em 0'}}>
-                        <label htmlFor="range-select"><strong> Sort by:</strong></label>
-                        <select
-                            id="range-select"
-                            value={timeRangeTrack}
-                            onChange={(e) => {
-                                setLoading(true);
-                                setTimeRangeTrack(e.target.value);
-                            }}
-                            >
-                            <option value="short_term">Short Term (last 4 weeks)</option>
-                            <option value="medium_term">Medium Term (last 6 months)</option>
-                            <option value="long_term">Long Term (all time)</option>
-                        </select>   
-                    </div>
-                    {tracks.map((track, index) => {
-                    const albumLink = albumLinksObj[(index + 1).toString()];
-                    return (
-                        <div className="track" key={index}>
-                            {track}
-                        <img
-                            src={albumLink}
-                            alt={`Album Cover for ${track}`}
-                            style={{ width: '100px', height: 'auto' }}
-                            loading='lazy'
-                        />
-                        </div>
-                    );
-                })}
-            </div>
+        <div class="top-bar">
+            <img src="/Stats4You.png" alt="Stats4You Logo" class="app-logo" />
 
-            <div className="TopArtists">
-                <h1>Top 20 Artists</h1>
+            <div class="center-content">
+                <img src={album_cover} alt="Current Song Album Cover" class="cover-art" loading="lazy" />
+                <h1>{current_song}</h1>
+            </div>
+            <img src={user_pfp} alt="User Profile" class="user-pfp" loading="lazy" />
+        </div>
+
+        <div className="content-container">
+            <div className="track">
+            <h1>Top 20 Tracks</h1>
                 <div className="sort-control" style={{margin: '1em 0'}}>
-                <label htmlFor="range-select"><strong> Sort by:</strong></label>
+                    <label htmlFor="range-select"><strong> Sort by:</strong></label>
                     <select
                         id="range-select"
-                        value={timeRangeArtist}
+                        value={timeRangeTrack}
                         onChange={(e) => {
-                            setLoading(true);
-                            setTimeRangeArtist(e.target.value);
+                                setLoading(true);
+                                setTimeRangeTrack(e.target.value);
                         }}
-                    >
+                        >
                         <option value="short_term">Short Term (last 4 weeks)</option>
                         <option value="medium_term">Medium Term (last 6 months)</option>
                         <option value="long_term">Long Term (all time)</option>
                     </select>   
                 </div>
-                {artists.map((artist, index) => {
-                    const artistLink = artistLinksObj[(index + 1).toString()];
+                {tracks.map((track, index) => {
+                const albumLink = albumLinksObj[(index + 1).toString()];
                 return (
-                    <div className="artist" key={index}>
-                        {artist}
-
-                        <img
-                            src={artistLink}
-                            alt={`Artist Cover for ${artist}`}
-                            style={{ width: '100px', height: 'auto' }}
-                            loading='lazy'
-                        />
-                        <p>Popularity: {popularity[index]}</p>
-                        <p>Followers: {followers[index]}</p>
+                    <div className="track" key={index}>
+                        {track}
+                    <img
+                        src={albumLink}
+                        alt={`Album Cover for ${track}`}
+                        style={{ width: '100px', height: 'auto' }}
+                        loading='lazy'
+                    />
                     </div>
                 );
             })}
             </div>
+
+        <div className="TopArtists">
+            <h1>Top 20 Artists</h1>
+            <div className="sort-control" style={{margin: '1em 0'}}>
+            <label htmlFor="range-select"><strong> Sort by:</strong></label>
+                <select
+                    id="range-select"
+                    value={timeRangeArtist}
+                    onChange={(e) => {
+                        setLoading(true);
+                        setTimeRangeArtist(e.target.value);
+                    }}
+                >
+                    <option value="short_term">Short Term (last 4 weeks)</option>
+                    <option value="medium_term">Medium Term (last 6 months)</option>
+                    <option value="long_term">Long Term (all time)</option>
+                </select>   
+            </div>
+            {artists.map((artist, index) => {
+                const artistLink = artistLinksObj[(index + 1).toString()];
+            return (
+                <div className="artist" key={index}>
+                    {artist}
+                    <img
+                        src={artistLink}
+                        alt={`Artist Cover for ${artist}`}
+                        style={{ width: '100px', height: 'auto' }}
+                        loading='lazy'
+                    />
+                    <p>Popularity: {popularity[index]}</p>
+                    <p>Followers: {followers[index]}</p>
+                </div>
+            );
+        })}
+        </div>
         </div>
     </div>
   );
