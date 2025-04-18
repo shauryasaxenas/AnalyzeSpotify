@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Resource, Api, reqparse, fields, marshal_with, abort
 from authentication import sp
-from spotify import current_song, get_current_album_cover, top_20_tracks, top_20_artists, user_details
+from spotify import current_song, get_current_album_cover, top_20_tracks, top_20_artists, user_details, previously_listened
 from flask_cors import CORS
 
 
@@ -128,7 +128,7 @@ class Top20Artists(Resource):
             }, 200
         else:
             return {"message": "No recent songs found"}, 404
-        
+
 class UserDetails(Resource):
     def get(self):
         user = user_details()
@@ -136,6 +136,14 @@ class UserDetails(Resource):
             return user, 200
         else:
             return {"message": "No user found"}, 404
+        
+class PreviouslyListened(Resource):
+    def get(self):
+        previous_songs = previously_listened()
+        if previous_songs:
+            return {"previous_songs": previous_songs}, 200
+        else:
+            return {"message": "No previously listened songs found"}, 404
 
 
 api.add_resource(Users, '/api/users/')
@@ -145,6 +153,7 @@ api.add_resource(Top20Tracks, '/api/top_tracks/')
 api.add_resource(getCurrentAlbumCover, '/api/album_cover/')
 api.add_resource(Top20Artists, '/api/top_artists/')
 api.add_resource(UserDetails, '/api/user_details/')
+api.add_resource(PreviouslyListened, '/api/previously_listened/')
 
 
 @app.route('/')
