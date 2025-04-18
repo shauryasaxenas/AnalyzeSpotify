@@ -1,5 +1,4 @@
 from authentication import sp
-import time
 import json
 # with open("pretty.json", "w") as f:
 #     json.dump(top_tracks, f, indent=4)
@@ -29,7 +28,7 @@ def top_20_artists(time_range="short_term"):
 
     def add_commas(num):
         return "{:,}".format(num)
-    
+
     artists_list = sp.current_user_top_artists(limit=20, time_range=time_range)["items"]
     popularity, artists, followers, artist_pfp_link, counter = {}, {}, {}, {}, 0
 
@@ -71,22 +70,26 @@ def get_current_album_cover():
         track = data["item"]
 
         return track['album']['images'][0]['url']
-    
     else:
         return "No song is currently playing"
+
 
 def previously_listened():
     previousSongs = sp.current_user_recently_played(limit=20)['items']
 
-    with open("pretty.json", "w") as f:
-        json.dump(previousSongs, f, indent=4)
-
     i = 0
     previous_20_songs = {}
+    previous_20_songs_links = {}
+    previous_20_songs_artists = {}
     while i < 20:
         previous_20_songs[i+1] = previousSongs[i]['track']['name']
+        previous_20_songs_links[i+1] = previousSongs[i]['track']['album']['images'][0]['url']
+        previous_20_songs_artists[i+1] = previousSongs[i]['track']['artists'][0]['name']
         i += 1
+
     print(previous_20_songs)
+
+    return [previous_20_songs, previous_20_songs_links, previous_20_songs_artists]
 
 
 def user_details():
@@ -101,5 +104,6 @@ def user_details():
         "user_pfp": user_pfp
     }
 
+
 if __name__ == "__main__":
-    user_details()
+    previously_listened()
