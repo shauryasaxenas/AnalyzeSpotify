@@ -44,14 +44,6 @@ def top_20_artists(time_range="short_term"):
     return artists, popularity, followers, artist_pfp_link
 
 
-def song_playing():
-    if sp.current_user_playing_track() is not None:
-        data = sp.current_user_playing_track()
-        items = data["item"]
-
-        return items["name"]
-
-
 def current_song():
     if sp.current_user_playing_track() is not None:
         artist_names = ""
@@ -83,23 +75,31 @@ def get_current_album_cover():
     else:
         return "No song is currently playing"
 
+def previously_listened():
+    previousSongs = sp.current_user_recently_played(limit=20)['items']
 
-def previous_songs(previous_10_Songs):
-    songPlaying = ""
-    previousSong = ""
-    while True:
-        songPlaying = song_playing()
-        if songPlaying is not previousSong:
-            previousSong = songPlaying
-            if previousSong is not None:
-                previous_10_Songs.insert(0, previousSong)
-            if len(previous_10_Songs) > 10:
-                previous_10_Songs.pop(10)
-            print(previous_10_Songs, "\n")
-        time.sleep(2)
+    with open("pretty.json", "w") as f:
+        json.dump(previousSongs, f, indent=4)
 
-        return previous_10_Songs
+    i = 0
+    previous_20_songs = {}
+    while i < 20:
+        previous_20_songs[i+1] = previousSongs[i]['track']['name']
+        i += 1
+    print(previous_20_songs)
 
-    
+
+def user_details():
+    user = sp.current_user()
+    user_name = user["display_name"]
+    user_email = user["email"]
+    user_pfp = user["images"][0]["url"]
+
+    return {
+        "user_name": user_name,
+        "user_email": user_email,
+        "user_pfp": user_pfp
+    }
+
 if __name__ == "__main__":
-    top_20_artists()
+    user_details()
