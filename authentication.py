@@ -27,8 +27,8 @@ scope = scope = (
     "streaming"
 )
 
-if os.path.exists(".cache"):
-    os.remove(".cache")
+# if os.path.exists(".cache"):
+#     os.remove(".cache")
 
 
 # Set up Spotify authentication
@@ -39,5 +39,4 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     scope=scope
     ),
     requests_timeout=10
-
 )
