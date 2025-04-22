@@ -25,13 +25,14 @@ def top_20_tracks(time_range="short_term"):
 
 
 def top_20_artists(time_range="short_term"):
-
+    # Fetch your top artists
     def add_commas(num):
+        # Function to add commas to numbers
         return "{:,}".format(num)
 
     artists_list = sp.current_user_top_artists(limit=20, time_range=time_range)["items"]
     popularity, artists, followers, artist_pfp_link, counter = {}, {}, {}, {}, 0
-
+    
     while counter < 20:
         artists[counter + 1] = f"{counter + 1}. {artists_list[counter]['name']}"
         popularity[counter + 1] = artists_list[counter]['popularity']

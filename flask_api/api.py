@@ -81,7 +81,7 @@ class User(Resource):
         users = UserModel.query.all()
         return users
 
-
+# Current Song API 
 class CurrentSong(Resource):
     def get(self):
         song = current_song()
@@ -90,7 +90,7 @@ class CurrentSong(Resource):
         else:
             return {"current_song": "No song is currently playing"}, 200
 
-
+# Top 20 Tracks API
 class Top20Tracks(Resource):
     def get(self):
         # Get the time range from the query string, default to "short_term"
