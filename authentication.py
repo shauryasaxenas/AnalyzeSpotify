@@ -10,6 +10,7 @@ CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
 REDIRECT_URI = os.environ.get("REDIRECT_URI")
 
 scope = scope = (
+    # Scope for accessing user's Spotify data
     "user-read-private "
     "user-read-email "
     "user-library-read "
