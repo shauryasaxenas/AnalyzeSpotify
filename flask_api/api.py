@@ -81,7 +81,8 @@ class User(Resource):
         users = UserModel.query.all()
         return users
 
-# Current Song API 
+
+# Current Song API
 class CurrentSong(Resource):
     def get(self):
         song = current_song()
@@ -89,6 +90,7 @@ class CurrentSong(Resource):
             return {"current_song": song}, 200
         else:
             return {"current_song": "No song is currently playing"}, 200
+
 
 # Top 20 Tracks API
 class Top20Tracks(Resource):
@@ -129,6 +131,7 @@ class Top20Artists(Resource):
         else:
             return {"message": "No recent songs found"}, 404
 
+
 class UserDetails(Resource):
     def get(self):
         user = user_details()
@@ -137,6 +140,7 @@ class UserDetails(Resource):
         else:
             return {"message": "No user found"}, 404
         
+
 class PreviouslyListened(Resource):
     def get(self):
         previous_songs = previously_listened()
