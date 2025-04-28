@@ -40,7 +40,6 @@ def top_20_artists(time_range="short_term"):
         artist_pfp_link[counter + 1] = artists_list[counter]['images'][0]['url']
         counter += 1
 
-    print(followers)
     return artists, popularity, followers, artist_pfp_link
 
 
@@ -88,7 +87,6 @@ def previously_listened():
         previous_20_songs_artists[i+1] = previousSongs[i]['track']['artists'][0]['name']
         i += 1
 
-    print(previous_20_songs)
 
     return [previous_20_songs, previous_20_songs_links, previous_20_songs_artists]
 
